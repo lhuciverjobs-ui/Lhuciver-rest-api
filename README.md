@@ -1,4 +1,4 @@
-# Lhuciver-restapis
+# Lhuciver-rest-api
 
 Clean Express REST API dashboard milik Lhuciver, dengan endpoint tester langsung dari browser dan response JSON yang mudah dibaca.
 
