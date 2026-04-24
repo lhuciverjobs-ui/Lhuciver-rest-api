@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#26313d">
+    <meta name="description" content="Lhuciver-restapis account panel untuk cek API key, status akun, dan sisa credit harian.">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>API Key Account</title>
+    <style>
+      :root {
+        --bg: #edf2f7;
+        --panel: #ffffff;
+        --text: #101418;
+        --muted: #66727f;
+        --line: #d8dee6;
+        --soft: #f5f7fa;
+        --dark: #111827;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        background: linear-gradient(135deg, #eff3f6 0%, #dfe7ee 100%);
+        color: var(--text);
+        margin: 0;
+        min-height: 100vh;
+      }
+      .wrap {
+        margin: 0 auto;
+        max-width: 920px;
+        padding: 24px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: 0 24px 80px rgba(16, 20, 24, 0.08);
+        overflow: hidden;
+      }
+      .hero {
+        padding: 28px;
+      }
+      h1, p { margin: 0; }
+      h1 {
+        font-size: clamp(34px, 6vw, 58px);
+        line-height: 0.94;
+        text-transform: uppercase;
+      }
+      .muted { color: var(--muted); }
+      form, .stack { display: grid; gap: 12px; }
+      label {
+        color: var(--muted);
+        display: grid;
+        font-size: 13px;
+        font-weight: 700;
+        gap: 8px;
+      }
+      input, button {
+        font: inherit;
+      }
+      input {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 13px 14px;
+        width: 100%;
+      }
+      button {
+        background: var(--dark);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 800;
+        min-height: 46px;
+        padding: 10px 16px;
+      }
+      .status {
+        min-height: 18px;
+      }
+      .status.error { color: #b42318; }
+      .status.success { color: #14532d; }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .secondary {
+        background: #eef2f6;
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding: 0 28px 28px;
+      }
+      .card {
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+      }
+      .card span {
+        color: var(--muted);
+        display: block;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+      .card strong {
+        display: block;
+        font-size: 28px;
+      }
+      .details {
+        border-top: 1px solid var(--line);
+        padding: 28px;
+      }
+
+      .credit-hero {
+        background: linear-gradient(145deg, #111, #050505);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        box-shadow:
+          0 10px 30px rgba(0, 0, 0, 0.55),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        color: #f8fafc;
+        margin: 0 28px 28px;
+        padding: 24px;
+      }
+
+      .credit-top {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .credit-label {
+        color: #9f9f9f;
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .credit-menu {
+        color: #fff;
+        font-size: 22px;
+        opacity: 0.7;
+      }
+
+      .credit-hero strong {
+        color: #fff;
+        display: block;
+        font-size: clamp(58px, 12vw, 72px);
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 22px;
+      }
+
+      .credit-progress {
+        background: #1d1d1d;
+        border-radius: 30px;
+        height: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .credit-progress-bar {
+        background: linear-gradient(90deg, #ffffff, #bfbfbf);
+        border-radius: 30px;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.18);
+        height: 100%;
+        width: 0%;
+      }
+
+      .credit-info {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin-top: 18px;
+      }
+
+      .credit-stat {
+        background: #111;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        flex: 1;
+        padding: 14px;
+      }
+
+      .credit-stat-label {
+        color: #8e8e8e;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .credit-stat-value {
+        color: #fff;
+        display: block;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .credit-stat.reset {
+        text-align: right;
+      }
+      .api-box {
+        background: #0f172a;
+        border-radius: 16px;
+        color: #f8fafc;
+        font-family: ui-monospace, monospace;
+        overflow-wrap: anywhere;
+        padding: 16px;
+      }
+      .hidden { display: none !important; }
+      @media (max-width: 820px) {
+        .grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 560px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="panel">
+        <div class="hero">
+          <p class="muted">User API Panel</p>
+          <h1>Check Your Key</h1>
+          <p class="muted" style="margin-top: 12px;">Masukkan API key kamu untuk lihat username, limit credit, sisa credit hari ini, dan status akun.</p>
+          <form id="accountForm" style="margin-top: 22px;">
+            <label>
+              API key user
+              <input id="apiKeyInput" placeholder="lhv_xxxxx" autocomplete="off" required>
+            </label>
+            <div class="actions">
+              <button type="submit">Cek Account</button>
+              <button class="secondary" id="logoutButton" type="button">Logout User</button>
+            </div>
+            <div class="status" id="accountStatus"></div>
+          </form>
+        </div>
+        <div class="grid hidden" id="summaryGrid">
+          <div class="card"><span>Username</span><strong id="userUsername">-</strong></div>
+          <div class="card"><span>Display Name</span><strong id="userDisplayName">-</strong></div>
+          <div class="card"><span>Daily Limit</span><strong id="userDailyLimit">-</strong></div>
+          <div class="card"><span>Credit Remaining</span><strong id="userCreditRemaining">-</strong></div>
+        </div>
+        <div class="credit-hero hidden" id="creditHero">
+          <div class="credit-top">
+            <div class="credit-label">Credit Hari Ini</div>
+            <div class="credit-menu">•••</div>
+          </div>
+          <strong id="creditHeroValue">-</strong>
+          <div class="credit-progress">
+            <div id="creditHeroBar" class="credit-progress-bar"></div>
+          </div>
+          <div class="credit-info">
+            <div class="credit-stat">
+              <span class="credit-stat-label">Limit</span>
+              <span id="creditHeroLimit" class="credit-stat-value">-</span>
+            </div>
+            <div class="credit-stat reset">
+              <span class="credit-stat-label">Reset</span>
+              <span id="creditHeroNote" class="credit-stat-value">-</span>
+            </div>
+          </div>
+        </div>
+        <div class="details hidden" id="detailsBox">
+          <div class="stack">
+            <div>
+              <p class="muted">API key aktif</p>
+              <div class="api-box" id="userApiKey">-</div>
+            </div>
+            <p class="muted" id="userMeta">-</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      const storageKey = 'lhuciver_user_api_key';
+      const usernameStorageKey = 'lhuciver_user_username';
+      const authKey = 'lhuciver_workspace_access';
+      const form = document.getElementById('accountForm');
+      const logoutButton = document.getElementById('logoutButton');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const accountStatus = document.getElementById('accountStatus');
+      const summaryGrid = document.getElementById('summaryGrid');
+      const detailsBox = document.getElementById('detailsBox');
+      const creditHero = document.getElementById('creditHero');
+      const creditHeroValue = document.getElementById('creditHeroValue');
+      const creditHeroBar = document.getElementById('creditHeroBar');
+      const creditHeroLimit = document.getElementById('creditHeroLimit');
+      const creditHeroNote = document.getElementById('creditHeroNote');
+      const userUsername = document.getElementById('userUsername');
+      const userDisplayName = document.getElementById('userDisplayName');
+      const userDailyLimit = document.getElementById('userDailyLimit');
+      const userCreditRemaining = document.getElementById('userCreditRemaining');
+      const userApiKey = document.getElementById('userApiKey');
+      const userMeta = document.getElementById('userMeta');
+
+      apiKeyInput.value = localStorage.getItem(storageKey) || '';
+
+      function setStatus(message, tone) {
+        accountStatus.textContent = message || '';
+        accountStatus.className = `status${tone ? ` ${tone}` : ''}`;
+      }
+
+      function clearUserBinding() {
+        localStorage.removeItem(authKey);
+        sessionStorage.removeItem(authKey);
+        localStorage.removeItem(storageKey);
+        localStorage.removeItem(usernameStorageKey);
+        apiKeyInput.value = '';
+        summaryGrid.classList.add('hidden');
+        detailsBox.classList.add('hidden');
+        creditHero.classList.add('hidden');
+      }
+
+      function renderUser(user) {
+        summaryGrid.classList.remove('hidden');
+        detailsBox.classList.remove('hidden');
+        creditHero.classList.remove('hidden');
+        userUsername.textContent = `@${user.username}`;
+        userDisplayName.textContent = user.display_name || '-';
+        userDailyLimit.textContent = user.daily_credit_limit;
+        userCreditRemaining.textContent = user.credit_remaining;
+        userApiKey.textContent = user.api_key;
+        userMeta.textContent = `Status: ${user.active ? 'active' : 'inactive'} | Reset harian: ${user.last_credit_reset_on} | Dibuat: ${new Date(user.created_at).toLocaleString()}`;
+
+        const percent = Math.max(0, Math.min(100, (user.credit_remaining / Math.max(1, user.daily_credit_limit)) * 100));
+        creditHeroValue.textContent = `${user.credit_remaining}`;
+        creditHeroLimit.textContent = `${user.daily_credit_limit}`;
+        creditHeroBar.style.width = `${percent}%`;
+        creditHeroNote.textContent = user.last_credit_reset_on;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const apiKey = apiKeyInput.value.trim();
+
+        if (!apiKey) {
+          setStatus('API key wajib diisi.', 'error');
+          return;
+        }
+
+        setStatus('Mengambil data account...', '');
+
+        try {
+          const response = await fetch('/api/me', {
+            headers: {
+              accept: 'application/json',
+              'x-api-key': apiKey
+            }
+          });
+          const payload = await response.json();
+
+          if (!response.ok || payload.status === false) {
+            throw new Error(payload.message || 'gagal mengambil data account');
+          }
+
+          localStorage.setItem(storageKey, apiKey);
+          localStorage.setItem(usernameStorageKey, payload.result.username);
+          renderUser(payload.result);
+          setStatus('Data account berhasil dimuat.', 'success');
+        } catch (error) {
+          summaryGrid.classList.add('hidden');
+          detailsBox.classList.add('hidden');
+          setStatus(error.message, 'error');
+        }
+      });
+
+      logoutButton.addEventListener('click', () => {
+        clearUserBinding();
+        setStatus('User logout berhasil. Device ini sekarang bisa dipakai akun lain.', 'success');
+        window.location.href = '/auth';
+      });
+    </script>
+  </body>
+</html>

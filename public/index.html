@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#26313d">
+    <meta name="description" content="Lhuciver-restapis runtime dan statistik API.">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>Lhuciver-restapis</title>
+    <link rel="stylesheet" href="/assets/styles/index.css">
+  </head>
+  <body>
+    <script>
+      if (localStorage.getItem('lhuciver_workspace_access') === '1' || sessionStorage.getItem('lhuciver_workspace_access') === '1') {
+        document.body.classList.add('is-authenticated');
+      }
+    </script>
+    <section class="auth-gate" id="authGate">
+      <div class="auth-bg" aria-hidden="true">
+        <div class="auth-ring one"></div>
+        <div class="auth-ring two"></div>
+        <div class="auth-scan-line"></div>
+      </div>
+      <div class="auth-shell">
+        <div class="auth-panel">
+          <div class="auth-panel-inner">
+            <div class="auth-brandline">LHUCIVER RESTAPIS</div>
+
+            <div class="auth-toggle" role="tablist" aria-label="Auth mode">
+              <button id="loginModeButton" class="active" type="button" aria-pressed="true">Login</button>
+              <button id="signupModeButton" type="button" aria-pressed="false">Sign Up</button>
+            </div>
+
+            <h2 id="authTitle" class="auth-title">LOGIN</h2>
+            <p id="authCopy" class="auth-copy">Masuk untuk mengakses dashboard API.</p>
+
+            <form id="authForm" class="auth-form">
+              <input id="fullNameInput" type="email" placeholder="gmail" autocomplete="email" inputmode="email" hidden>
+              <input id="emailInput" type="text" placeholder="username" autocomplete="username" autocapitalize="none" spellcheck="false">
+              <div class="input-with-toggle">
+                <input id="passwordInput" type="password" placeholder="Password" autocomplete="current-password">
+                <button id="togglePasswordButton" class="input-toggle" type="button" aria-label="Tampilkan password">
+                  <svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="m3 3 18 18"></path>
+                    <path d="M10.7 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3.2 4.1"></path>
+                    <path d="M6.6 6.6A17.7 17.7 0 0 0 2 12s3.5 7 10 7a9.8 9.8 0 0 0 4.2-.9"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div id="loginExtras" class="auth-row">
+                <label class="auth-check">
+                  <input id="rememberMeInput" type="checkbox">
+                  <span>Remember me</span>
+                </label>
+                <button id="forgotPasswordButton" class="auth-link" type="button">Forgot password?</button>
+              </div>
+
+              <div class="auth-actions">
+                <button id="authSubmitButton" class="auth-submit" type="submit">Sign In</button>
+                <button id="authGhostButton" class="auth-ghost" type="button">Continue as guest</button>
+              </div>
+
+              <div id="authStatus" class="auth-status"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button id="mobileMenuToggle" class="mobile-toggle" type="button" aria-label="Toggle sidebar">☰</button>
+    <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <button id="sidebarCloseToggle" class="sidebar-toggle-close" type="button" aria-label="Close sidebar">×</button>
+        <div class="brand">
+          <img src="/logo.png" alt="Lhuciver logo">
+          <div>
+            <strong>Lhuciver</strong>
+            <span>RESTAPIS</span>
+          </div>
+        </div>
+
+        <nav>
+          <section class="nav-section">
+            <p class="nav-title">Main</p>
+            <button class="nav-item active" type="button" data-view="dashboard">
+              <span class="nav-icon">DB</span>
+              <span>Dashboard</span>
+            </button>
+            <button class="nav-item" type="button" data-view="runtime">
+              <span class="nav-icon">RT</span>
+              <span>Runtime</span>
+            </button>
+            <button class="nav-item" type="button" data-view="statistic">
+              <span class="nav-icon">ST</span>
+              <span>Statistic</span>
+            </button>
+            <button class="nav-item" type="button" data-view="uptime">
+              <span class="nav-icon">UP</span>
+              <span>Uptime</span>
+            </button>
+          </section>
+
+          <section class="nav-section">
+            <p class="nav-title">API Feature</p>
+            <button class="nav-item" type="button" data-view="downloader">
+              <span class="nav-icon">DL</span>
+              <span>Downloader</span>
+            </button>
+            <button class="nav-item" type="button" data-view="tools">
+              <span class="nav-icon">TL</span>
+              <span>Tools</span>
+            </button>
+            <button class="nav-item" type="button" data-view="news">
+              <span class="nav-icon">NW</span>
+              <span>News</span>
+            </button>
+            <button class="nav-item" type="button" data-view="anime">
+              <span class="nav-icon">AN</span>
+              <span>Anime</span>
+            </button>
+            <button class="nav-item" type="button" data-view="search">
+              <span class="nav-icon">SR</span>
+              <span>Search</span>
+            </button>
+            <button class="nav-item" type="button" data-view="lookup">
+              <span class="nav-icon">LK</span>
+              <span>Lookup</span>
+            </button>
+          </section>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <section id="dashboardView" class="view active">
+          <section class="topbar">
+            <div class="hero-rain" aria-hidden="true">
+              <span style="--left:5.5%;animation-duration:5s;animation-delay:0s;">GET /api</span>
+              <span style="--left:11%;animation-duration:6s;animation-delay:.25s;">200 OK</span>
+              <span style="--left:16.5%;animation-duration:7s;animation-delay:.5s;">JSON</span>
+              <span style="--left:22%;animation-duration:8s;animation-delay:.75s;">GET /api</span>
+              <span style="--left:27.5%;animation-duration:9s;animation-delay:1s;">200 OK</span>
+              <span style="--left:33%;animation-duration:5s;animation-delay:1.25s;">JSON</span>
+              <span style="--left:38.5%;animation-duration:6s;animation-delay:1.5s;">GET /api</span>
+              <span style="--left:44%;animation-duration:7s;animation-delay:1.75s;">200 OK</span>
+              <span style="--left:49.5%;animation-duration:8s;animation-delay:2s;">JSON</span>
+              <span style="--left:55%;animation-duration:9s;animation-delay:2.25s;">GET /api</span>
+              <span style="--left:60.5%;animation-duration:5s;animation-delay:2.5s;">200 OK</span>
+              <span style="--left:66%;animation-duration:6s;animation-delay:2.75s;">JSON</span>
+              <span style="--left:71.5%;animation-duration:7s;animation-delay:3s;">GET /api</span>
+              <span style="--left:77%;animation-duration:8s;animation-delay:3.25s;">200 OK</span>
+              <span style="--left:82.5%;animation-duration:9s;animation-delay:3.5s;">JSON</span>
+              <span style="--left:88%;animation-duration:5s;animation-delay:3.75s;">GET /api</span>
+              <span style="--left:93.5%;animation-duration:6s;animation-delay:4s;">200 OK</span>
+              <span style="--left:98%;animation-duration:7s;animation-delay:4.25s;">JSON</span>
+            </div>
+            <div class="hero-orbit" aria-hidden="true">
+              <span style="--left:0%;animation-delay:0s;"></span>
+              <span style="--left:34%;animation-delay:.35s;"></span>
+              <span style="--left:68%;animation-delay:.7s;"></span>
+            </div>
+            <div class="hero-sweep" aria-hidden="true"></div>
+
+            <div class="hero-shell">
+              <div class="hero-copy">
+                <span class="kicker">Lhuciver API workspace</span>
+                <h1 class="hero-title" aria-label="LHUCIVER-RESTAPIS">
+                  <span style="--delay:.00s;">L</span><span style="--delay:.03s;">H</span><span style="--delay:.06s;">U</span><span style="--delay:.09s;">C</span><span style="--delay:.12s;">I</span><span style="--delay:.15s;">V</span><span style="--delay:.18s;">E</span><span style="--delay:.21s;">R</span><span style="--delay:.24s;">-</span><span style="--delay:.27s;">R</span><span style="--delay:.30s;">E</span><span style="--delay:.33s;">S</span><span style="--delay:.36s;">T</span><span style="--delay:.39s;">A</span><span style="--delay:.42s;">P</span><span style="--delay:.45s;">I</span><span style="--delay:.48s;">S</span>
+                </h1>
+                <div class="hero-bar-grid" aria-hidden="true">
+                  <span style="animation-delay:0s;"></span>
+                  <span style="animation-delay:.08s;"></span>
+                  <span style="animation-delay:.16s;"></span>
+                  <span style="animation-delay:.24s;"></span>
+                  <span style="animation-delay:.32s;"></span>
+                  <span style="animation-delay:.40s;"></span>
+                  <span style="animation-delay:.48s;"></span>
+                  <span style="animation-delay:.56s;"></span>
+                  <span style="animation-delay:.64s;"></span>
+                  <span style="animation-delay:.72s;"></span>
+                  <span style="animation-delay:.80s;"></span>
+                  <span style="animation-delay:.88s;"></span>
+                </div>
+                <p>Runtime dan statistik pemakaian API secara real-time.</p>
+              </div>
+
+              <div class="topbar-side">
+                <div class="hero-chip">
+                  <span class="hero-chip-dot"></span>
+                  <span>LIVE API MONITORING</span>
+                </div>
+                <div class="hero-chip shift">PING 24MS</div>
+                <div class="hero-chip scale">UPTIME 99.9%</div>
+              </div>
+
+              <div class="hero-panels">
+                <div class="server-card">
+                  <span id="serverStatus" class="status-dot">Checking</span>
+                  <span id="serverUptime" class="muted">-</span>
+                </div>
+                <div class="api-key-card">
+                  <div class="api-user-head">
+                    <div class="api-user-profile">
+                      <div class="profile-ring" aria-hidden="true">
+                        <span id="heroProfileInitials" class="profile-initials">G</span>
+                      </div>
+                      <div class="api-user-meta">
+                        <strong id="heroProfileName">@guest</strong>
+                        <span id="heroProfileRole">dashboard user</span>
+                      </div>
+                    </div>
+                  </div>
+                  <label for="apiKeyInputMain">API key user</label>
+                  <div class="api-key-row">
+                    <div class="api-key-field">
+                      <input id="apiKeyInputMain" type="password" placeholder="lhv_xxxxx" autocomplete="off">
+                      <button class="api-key-vision" id="toggleApiKeyButton" type="button" aria-label="Tampilkan API key">◉</button>
+                    </div>
+                    <button class="action secondary" id="openAccountButton" type="button">Account</button>
+                    <button class="action secondary" id="logoutUserButton" type="button">Logout</button>
+                  </div>
+                  <div id="apiKeyMeta" class="api-key-meta">Belum ada API key aktif.</div>
+                  <div class="credit-box">
+                    <div class="credit-top">
+                      <div class="credit-label">Credit Hari Ini</div>
+                      <div class="credit-menu">•••</div>
+                    </div>
+                    <strong id="creditRemainingMain">-</strong>
+                    <div class="credit-progress">
+                      <div id="creditProgressMain" class="credit-progress-bar"></div>
+                    </div>
+                    <div class="credit-info">
+                      <div class="credit-stat">
+                        <span class="credit-stat-label">Limit</span>
+                        <span id="creditLimitMain" class="credit-stat-value">-</span>
+                      </div>
+                      <div class="credit-stat reset">
+                        <span class="credit-stat-label">Reset</span>
+                        <span id="creditCaptionMain" class="credit-stat-value">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="dashboard-grid">
+            <div class="metric-card">
+              <span>Runtime</span>
+              <strong id="dashboardRuntime">00:00:00</strong>
+            </div>
+            <div class="metric-card">
+              <span>Users</span>
+              <strong id="dashboardUsers">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Requests</span>
+              <strong id="dashboardRequests">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Features</span>
+              <strong id="dashboardFeatures">36</strong>
+            </div>
+          </div>
+
+          <div class="dashboard-layout">
+            <div class="analytics-stack">
+              <div class="panel analytics-card dark">
+                <div class="panel-head">
+                  <div>
+                    <h2>Requests / Minute</h2>
+                    <p class="muted">Ringkasan request API dalam 30 menit terakhir.</p>
+                  </div>
+                  <span id="dashboardChartUpdated" class="muted">-</span>
+                </div>
+                <div class="chart-frame dark">
+                  <div id="dashboardLineChart" class="svg-chart"></div>
+                </div>
+                <div class="chart-legend">
+                  <span class="chart-pill dark">API requests</span>
+                  <span class="chart-pill muted">Total users</span>
+                </div>
+              </div>
+
+              <div class="panel analytics-card light">
+                <div class="panel-head">
+                  <div>
+                    <h2>Users / Minute</h2>
+                    <p class="muted">Pertumbuhan pengguna yang terdeteksi oleh middleware.</p>
+                  </div>
+                </div>
+                <div class="chart-frame light">
+                  <div id="dashboardBarChart" class="svg-chart"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Feature Status</h2>
+                  <p class="muted">Kategori aktif di API workspace.</p>
+                </div>
+              </div>
+              <div id="featureStatusList" class="status-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="runtimeView" class="view">
+          <div class="runtime-panel">
+            <div class="runtime-shell">
+              <div class="runtime-topline">
+                <div class="runtime-pill">
+                  <span class="runtime-pill-dot"></span>
+                  <span>LIVE RUNTIME STREAM</span>
+                </div>
+                <div class="runtime-note">Node process heartbeat</div>
+              </div>
+              <div>
+                <span class="runtime-label">Runtime aktif</span>
+                <strong id="runtimeClock" class="runtime-clock">00:00:00</strong>
+                <p class="runtime-sub">Web aktif sejak server Node berjalan dan statusnya diperbarui real-time.</p>
+              </div>
+              <div class="runtime-wave" aria-hidden="true">
+                <span style="animation-delay:0s;"></span>
+                <span style="animation-delay:.08s;"></span>
+                <span style="animation-delay:.16s;"></span>
+                <span style="animation-delay:.24s;"></span>
+                <span style="animation-delay:.32s;"></span>
+                <span style="animation-delay:.40s;"></span>
+                <span style="animation-delay:.48s;"></span>
+                <span style="animation-delay:.56s;"></span>
+                <span style="animation-delay:.64s;"></span>
+                <span style="animation-delay:.72s;"></span>
+                <span style="animation-delay:.80s;"></span>
+                <span style="animation-delay:.88s;"></span>
+                <span style="animation-delay:.96s;"></span>
+                <span style="animation-delay:1.04s;"></span>
+                <span style="animation-delay:1.12s;"></span>
+                <span style="animation-delay:1.20s;"></span>
+                <span style="animation-delay:1.28s;"></span>
+                <span style="animation-delay:1.36s;"></span>
+              </div>
+              <div class="runtime-grid">
+                <div class="runtime-box">
+                  <span>Status</span>
+                  <strong id="runtimeStatusText">ONLINE</strong>
+                </div>
+                <div class="runtime-box">
+                  <span>Started At</span>
+                  <strong id="runtimeStartedAt">-</strong>
+                </div>
+                <div class="runtime-box">
+                  <span>Node</span>
+                  <strong id="runtimeNodeVersion">-</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="statisticView" class="view">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span>Total user</span>
+              <strong id="totalUsers">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Request API terpanggil</span>
+              <strong id="totalRequests">0</strong>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Traffic Analytics</h2>
+                <p class="muted">Grafik request API dan total user dalam 30 menit terakhir.</p>
+              </div>
+              <span id="chartUpdated" class="muted">-</span>
+            </div>
+            <div class="chart-frame dark" style="background:#0b0d10;">
+              <div id="statsLineChart" class="svg-chart"></div>
+            </div>
+            <div class="chart-legend" style="background:#0b0d10;">
+              <span class="chart-pill dark">API requests</span>
+              <span class="chart-pill muted">Total users</span>
+            </div>
+          </div>
+
+          <div class="panel analytics-card light" style="margin-top:18px;">
+            <div class="panel-head">
+              <div>
+                <h2>User Trend</h2>
+                <p class="muted">Distribusi total user yang tersimpan di history.</p>
+              </div>
+            </div>
+            <div class="chart-frame light">
+              <div id="statsBarChart" class="svg-chart"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="uptimeView" class="view">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span>Server aktif</span>
+              <strong id="uptimeMetric">00:00:00</strong>
+            </div>
+            <div class="metric-card">
+              <span>Started at</span>
+              <strong id="startedAtMetric">-</strong>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Uptime Info</h2>
+                <p class="muted">Informasi waktu aktif server Node yang menjalankan dashboard ini.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="downloaderView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Downloader</h2>
+                <p class="muted">Pilih fitur downloader, isi URL/query, lalu test response API.</p>
+              </div>
+            </div>
+          </div>
+          <div id="downloaderTester"></div>
+          <div id="downloaderGrid" class="feature-grid"></div>
+        </section>
+
+        <section id="toolsView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Tools</h2>
+                <p class="muted">Semua tools dipusatkan ke satu tester yang sama.</p>
+              </div>
+            </div>
+          </div>
+          <div id="toolsTester"></div>
+          <div id="toolsGrid" class="feature-grid"></div>
+        </section>
+
+        <section id="newsView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>News</h2>
+                <p class="muted">Pilih provider news, isi query, lalu test response API.</p>
+              </div>
+            </div>
+          </div>
+          <div id="newsTester"></div>
+          <div id="newsGrid" class="feature-grid"></div>
+        </section>
+
+        <section id="animeView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Anime</h2>
+                <p class="muted">Pilih endpoint anime, isi keyword, lalu test response API.</p>
+              </div>
+            </div>
+          </div>
+          <div id="animeTester"></div>
+          <div id="animeGrid" class="feature-grid"></div>
+        </section>
+
+        <section id="searchView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Search</h2>
+                <p class="muted">Pilih endpoint search, isi keyword, lalu test response API.</p>
+              </div>
+            </div>
+          </div>
+          <div id="searchTester"></div>
+          <div id="searchGrid" class="feature-grid"></div>
+        </section>
+
+        <section id="lookupView" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Lookup</h2>
+                <p class="muted">Pilih endpoint lookup, isi parameter, lalu test response API.</p>
+              </div>
+            </div>
+          </div>
+          <div id="lookupTester"></div>
+          <div id="lookupGrid" class="feature-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/js/index.js"></script>
+  </body>
+</html>

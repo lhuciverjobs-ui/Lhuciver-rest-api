@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#26313d">
+    <meta name="description" content="Lhuciver-restapis admin dashboard untuk mengatur user, API key, credit, dan setting web.">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>Admin Dashboard</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #eef2f5;
+        --panel: #ffffff;
+        --text: #101418;
+        --muted: #66727f;
+        --line: #d7dee5;
+        --accent: #111827;
+        --soft: #f4f6f8;
+        --danger: #b42318;
+        --ok: #14532d;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(180deg, #f5f7fa 0%, #e8edf2 100%);
+        color: var(--text);
+        margin: 0;
+      }
+
+      h1, h2, h3, p {
+        margin: 0;
+      }
+
+      .shell {
+        margin: 0 auto;
+        max-width: 1280px;
+        padding: 24px;
+      }
+
+      .login-card,
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 24px 80px rgba(16, 20, 24, 0.08);
+      }
+
+      .login-wrap {
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .login-card {
+        max-width: 420px;
+        padding: 28px;
+        width: 100%;
+      }
+
+      .login-card h1 {
+        font-size: 38px;
+        line-height: 0.94;
+        text-transform: uppercase;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      form,
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        color: var(--muted);
+        display: grid;
+        font-size: 13px;
+        font-weight: 700;
+        gap: 8px;
+      }
+
+      input,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      textarea {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: var(--text);
+        padding: 12px 14px;
+        width: 100%;
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      button {
+        border: 0;
+        border-radius: 12px;
+        cursor: pointer;
+        min-height: 44px;
+        padding: 10px 16px;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+        font-weight: 800;
+      }
+
+      .secondary {
+        background: var(--soft);
+        border: 1px solid var(--line);
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .danger {
+        background: #fff1f1;
+        border: 1px solid #f5c2c7;
+        color: var(--danger);
+        font-weight: 700;
+      }
+
+      .topbar {
+        align-items: center;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .topbar h1 {
+        font-size: clamp(30px, 4vw, 54px);
+        line-height: 0.94;
+        text-transform: uppercase;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+      }
+
+      .card span {
+        color: var(--muted);
+        display: block;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+
+      .card strong {
+        display: block;
+        font-size: 32px;
+        line-height: 1;
+      }
+
+      .two-col {
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      }
+
+      .panel {
+        overflow: hidden;
+      }
+
+      .panel-head {
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 18px 20px;
+      }
+
+      .panel-body {
+        padding: 20px;
+      }
+
+      .inline-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .user-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .user-item {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .user-head {
+        align-items: start;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .pill {
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 10px;
+      }
+
+      .pill.ok {
+        background: #e8f6ed;
+        color: var(--ok);
+      }
+
+      .pill.off {
+        background: #f2f4f7;
+        color: var(--muted);
+      }
+
+      .user-meta {
+        color: var(--muted);
+        display: grid;
+        gap: 4px;
+        font-size: 13px;
+        margin-bottom: 14px;
+      }
+
+      .api-box {
+        background: var(--soft);
+        border-radius: 12px;
+        font-family: ui-monospace, monospace;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+        padding: 12px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .status {
+        min-height: 18px;
+      }
+
+      .status.error {
+        color: var(--danger);
+      }
+
+      .status.success {
+        color: var(--ok);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 980px) {
+        .stats,
+        .two-col,
+        .inline-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-wrap" id="loginView">
+      <div class="login-card">
+        <p class="muted">Lhuciver Control Panel</p>
+        <h1>Admin Login</h1>
+        <p class="muted" style="margin-top: 12px;">Masuk untuk ngatur user, API key, credit harian, dan setting web.</p>
+        <form id="loginForm" style="margin-top: 22px;">
+          <label>
+            Username admin
+            <input id="adminUsername" name="username" autocomplete="username" required>
+          </label>
+          <label>
+            Password admin
+            <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="primary" type="submit">Masuk Admin</button>
+          <div class="status" id="loginStatus"></div>
+        </form>
+      </div>
+    </div>
+
+    <main class="shell hidden" id="adminView">
+      <div class="topbar">
+        <div>
+          <p class="muted">Dashboard admin lokal</p>
+          <h1>Control Center</h1>
+        </div>
+        <div class="actions">
+          <button class="secondary" id="refreshButton" type="button">Refresh</button>
+          <button class="danger" id="logoutButton" type="button">Logout</button>
+        </div>
+      </div>
+
+      <div class="grid stats" id="statsGrid">
+        <div class="card">
+          <span>Total User</span>
+          <strong id="statUsers">0</strong>
+        </div>
+        <div class="card">
+          <span>User Aktif</span>
+          <strong id="statActive">0</strong>
+        </div>
+        <div class="card">
+          <span>Total Credit Hari Ini</span>
+          <strong id="statCredits">0</strong>
+        </div>
+        <div class="card">
+          <span>Total Limit Harian</span>
+          <strong id="statDailyLimit">0</strong>
+        </div>
+      </div>
+
+      <div class="grid two-col" style="margin-top: 18px;">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Setting Web</h2>
+              <p class="muted">App name, creator, maintenance, default credit.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <form class="stack" id="settingsForm">
+              <div class="inline-grid">
+                <label>
+                  App name override
+                  <input id="settingAppName" name="app_name_override">
+                </label>
+                <label>
+                  Creator override
+                  <input id="settingCreator" name="app_creator_override">
+                </label>
+              </div>
+              <div class="inline-grid">
+                <label>
+                  Default credit harian
+                  <input id="settingDailyCredit" name="default_daily_credit" type="number" min="0" value="50">
+                </label>
+                <label>
+                  Maintenance mode
+                  <input id="settingMaintenance" name="maintenance_mode" type="checkbox" style="width:auto;transform:scale(1.2);margin-top:14px;">
+                </label>
+              </div>
+              <label>
+                Public notice
+                <textarea id="settingNotice" name="public_notice"></textarea>
+              </label>
+              <button class="primary" type="submit">Simpan Setting</button>
+              <div class="status" id="settingsStatus"></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Buat User Baru</h2>
+              <p class="muted">User baru otomatis dapat Gmail login, password login, API key, dan credit harian.</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <form class="stack" id="createUserForm">
+              <div class="inline-grid">
+                <label>
+                  Username
+                  <input id="newUsername" name="username" placeholder="misal user_demo" required>
+                </label>
+                <label>
+                  Gmail
+                  <input id="newEmail" name="email" type="email" placeholder="misaluser@gmail.com" autocomplete="email" required>
+                </label>
+              </div>
+              <div class="inline-grid">
+                <label>
+                  Display name
+                  <input id="newDisplayName" name="display_name" placeholder="Nama user">
+                </label>
+                <label>
+                  Password login
+                  <input id="newPassword" name="password" type="password" placeholder="Minimal 8 karakter, ada huruf besar, kecil, angka" autocomplete="new-password" required>
+                </label>
+              </div>
+              <div class="inline-grid">
+                <label>
+                  Credit harian
+                  <input id="newDailyCredit" name="daily_credit_limit" type="number" min="0" value="50">
+                </label>
+                <label>
+                  Status aktif
+                  <input id="newActive" name="active" type="checkbox" checked style="width:auto;transform:scale(1.2);margin-top:14px;">
+                </label>
+              </div>
+              <button class="primary" type="submit">Buat User</button>
+              <div class="status" id="createUserStatus"></div>
+            </form>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top: 18px;">
+        <div class="panel-head">
+          <div>
+            <h2>Daftar User</h2>
+            <p class="muted">Atur username, display name, API key, status, dan credit per user.</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="user-list" id="userList"></div>
+          <p class="muted hidden" id="emptyUsers">Belum ada user.</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const loginView = document.getElementById('loginView');
+      const adminView = document.getElementById('adminView');
+      const loginForm = document.getElementById('loginForm');
+      const loginStatus = document.getElementById('loginStatus');
+      const logoutButton = document.getElementById('logoutButton');
+      const refreshButton = document.getElementById('refreshButton');
+      const settingsForm = document.getElementById('settingsForm');
+      const settingsStatus = document.getElementById('settingsStatus');
+      const createUserForm = document.getElementById('createUserForm');
+      const createUserStatus = document.getElementById('createUserStatus');
+      const userList = document.getElementById('userList');
+      const emptyUsers = document.getElementById('emptyUsers');
+
+      const statUsers = document.getElementById('statUsers');
+      const statActive = document.getElementById('statActive');
+      const statCredits = document.getElementById('statCredits');
+      const statDailyLimit = document.getElementById('statDailyLimit');
+
+      const settingAppName = document.getElementById('settingAppName');
+      const settingCreator = document.getElementById('settingCreator');
+      const settingNotice = document.getElementById('settingNotice');
+      const settingMaintenance = document.getElementById('settingMaintenance');
+      const settingDailyCredit = document.getElementById('settingDailyCredit');
+
+      async function request(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          credentials: 'same-origin',
+          headers: {
+            accept: 'application/json',
+            ...(options.body ? { 'content-type': 'application/json' } : {}),
+            ...(options.headers || {})
+          }
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || payload.status === false) {
+          throw new Error(payload.message || 'request gagal');
+        }
+
+        return payload.result;
+      }
+
+      function setStatus(node, message, tone) {
+        node.textContent = message || '';
+        node.className = `status${tone ? ` ${tone}` : ''}`;
+      }
+
+      function showAdmin() {
+        loginView.classList.add('hidden');
+        adminView.classList.remove('hidden');
+      }
+
+      function showLogin() {
+        adminView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      }
+
+      function userCard(user) {
+        const item = document.createElement('article');
+        item.className = 'user-item';
+        item.innerHTML = `
+          <div class="user-head">
+            <div>
+              <h3>${user.display_name || user.username}</h3>
+              <p class="muted">@${user.username}</p>
+            </div>
+            <span class="pill ${user.active ? 'ok' : 'off'}">${user.active ? 'Active' : 'Inactive'}</span>
+          </div>
+          <div class="user-meta">
+            <span>Gmail login: ${user.email || '-'}</span>
+            <span>Dibuat: ${new Date(user.created_at).toLocaleString()}</span>
+            <span>Reset harian: ${user.last_credit_reset_on}</span>
+            <span>Limit: ${user.daily_credit_limit} | Sisa hari ini: ${user.credit_remaining}</span>
+          </div>
+          <div class="api-box">${user.api_key}</div>
+          <form class="stack user-form" style="margin-top:14px;">
+            <div class="inline-grid">
+              <label>
+                Gmail
+                <input name="email" type="email" value="${user.email || ''}">
+              </label>
+              <label>
+                Username
+                <input name="username" value="${user.username}">
+              </label>
+            </div>
+            <div class="inline-grid">
+              <label>
+                Display name
+                <input name="display_name" value="${user.display_name || ''}">
+              </label>
+              <div></div>
+            </div>
+            <div class="inline-grid">
+              <label>
+                Limit credit harian
+                <input name="daily_credit_limit" type="number" min="0" value="${user.daily_credit_limit}">
+              </label>
+              <label>
+                Sisa credit hari ini
+                <input name="credit_remaining" type="number" min="0" value="${user.credit_remaining}">
+              </label>
+            </div>
+            <label>
+              User aktif
+              <input name="active" type="checkbox" ${user.active ? 'checked' : ''} style="width:auto;transform:scale(1.2);margin-top:14px;">
+            </label>
+            <div class="actions">
+              <button class="primary" type="submit">Simpan User</button>
+              <button class="secondary reset-credit" type="button">Reset Credit</button>
+              <button class="secondary regenerate-key" type="button">Regenerate API Key</button>
+              <button class="danger delete-user" type="button">Hapus</button>
+            </div>
+            <div class="status"></div>
+          </form>
+        `;
+
+        const form = item.querySelector('.user-form');
+        const status = item.querySelector('.status');
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          setStatus(status, 'Menyimpan user...', '');
+
+          try {
+            await request(`/api/admin/users/${user.id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                email: form.email.value,
+                username: form.username.value,
+                display_name: form.display_name.value,
+                daily_credit_limit: Number(form.daily_credit_limit.value),
+                credit_remaining: Number(form.credit_remaining.value),
+                active: form.active.checked
+              })
+            });
+            setStatus(status, 'User berhasil disimpan.', 'success');
+            await loadDashboard();
+          } catch (error) {
+            setStatus(status, error.message, 'error');
+          }
+        });
+
+        item.querySelector('.reset-credit').addEventListener('click', async () => {
+          setStatus(status, 'Mereset credit...', '');
+
+          try {
+            await request(`/api/admin/users/${user.id}/reset-credit`, { method: 'POST' });
+            setStatus(status, 'Credit user direset.', 'success');
+            await loadDashboard();
+          } catch (error) {
+            setStatus(status, error.message, 'error');
+          }
+        });
+
+        item.querySelector('.regenerate-key').addEventListener('click', async () => {
+          setStatus(status, 'Mengganti API key...', '');
+
+          try {
+            await request(`/api/admin/users/${user.id}/regenerate-apikey`, { method: 'POST' });
+            setStatus(status, 'API key user diganti.', 'success');
+            await loadDashboard();
+          } catch (error) {
+            setStatus(status, error.message, 'error');
+          }
+        });
+
+        item.querySelector('.delete-user').addEventListener('click', async () => {
+          if (!window.confirm(`Hapus user ${user.username}?`)) {
+            return;
+          }
+
+          setStatus(status, 'Menghapus user...', '');
+
+          try {
+            await request(`/api/admin/users/${user.id}`, { method: 'DELETE' });
+            setStatus(status, 'User dihapus.', 'success');
+            await loadDashboard();
+          } catch (error) {
+            setStatus(status, error.message, 'error');
+          }
+        });
+
+        return item;
+      }
+
+      function renderUsers(users) {
+        userList.innerHTML = '';
+        emptyUsers.classList.toggle('hidden', users.length > 0);
+
+        users.forEach((user) => {
+          userList.appendChild(userCard(user));
+        });
+      }
+
+      async function loadDashboard() {
+        const [overview, users, settings] = await Promise.all([
+          request('/api/admin/overview'),
+          request('/api/admin/users'),
+          request('/api/admin/settings')
+        ]);
+
+        statUsers.textContent = overview.total_users;
+        statActive.textContent = overview.active_users;
+        statCredits.textContent = overview.total_credit_remaining;
+        statDailyLimit.textContent = overview.total_daily_credit_limit;
+
+        settingAppName.value = settings.app_name_override || '';
+        settingCreator.value = settings.app_creator_override || '';
+        settingNotice.value = settings.public_notice || '';
+        settingMaintenance.checked = Boolean(settings.maintenance_mode);
+        settingDailyCredit.value = settings.default_daily_credit || 50;
+
+        renderUsers(users);
+      }
+
+      async function boot() {
+        try {
+          await request('/api/admin/session');
+          showAdmin();
+          await loadDashboard();
+        } catch (error) {
+          showLogin();
+        }
+      }
+
+      loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        setStatus(loginStatus, 'Memproses login admin...', '');
+
+        try {
+          await request('/api/admin/login', {
+            method: 'POST',
+            body: JSON.stringify({
+              username: loginForm.username.value,
+              password: loginForm.password.value
+            })
+          });
+          setStatus(loginStatus, 'Login admin berhasil.', 'success');
+          showAdmin();
+          await loadDashboard();
+        } catch (error) {
+          setStatus(loginStatus, error.message, 'error');
+        }
+      });
+
+      logoutButton.addEventListener('click', async () => {
+        await request('/api/admin/logout', { method: 'POST' }).catch(() => null);
+        showLogin();
+      });
+
+      refreshButton.addEventListener('click', async () => {
+        await loadDashboard();
+      });
+
+      settingsForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        setStatus(settingsStatus, 'Menyimpan setting...', '');
+
+        try {
+          await request('/api/admin/settings', {
+            method: 'PUT',
+            body: JSON.stringify({
+              app_name_override: settingAppName.value,
+              app_creator_override: settingCreator.value,
+              public_notice: settingNotice.value,
+              maintenance_mode: settingMaintenance.checked,
+              default_daily_credit: Number(settingDailyCredit.value)
+            })
+          });
+          setStatus(settingsStatus, 'Setting web berhasil disimpan.', 'success');
+          await loadDashboard();
+        } catch (error) {
+          setStatus(settingsStatus, error.message, 'error');
+        }
+      });
+
+      createUserForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        setStatus(createUserStatus, 'Membuat user...', '');
+
+        try {
+          await request('/api/admin/users', {
+            method: 'POST',
+            body: JSON.stringify({
+              email: createUserForm.email.value,
+              username: createUserForm.username.value,
+              password: createUserForm.password.value,
+              display_name: createUserForm.display_name.value,
+              daily_credit_limit: Number(createUserForm.daily_credit_limit.value),
+              active: createUserForm.active.checked
+            })
+          });
+          createUserForm.reset();
+          createUserForm.daily_credit_limit.value = settingDailyCredit.value || 50;
+          createUserForm.active.checked = true;
+          setStatus(createUserStatus, 'User baru berhasil dibuat.', 'success');
+          await loadDashboard();
+        } catch (error) {
+          setStatus(createUserStatus, error.message, 'error');
+        }
+      });
+
+      boot();
+    </script>
+  </body>
+</html>
